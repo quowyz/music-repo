@@ -1,14 +1,104 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-  <meta charset="UTF-8">
-  <title>播放音乐</title>
+<meta charset="UTF-8">
+<title>音乐播放页面</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    text-align: center;
+    padding: 40px;
+  }
+
+  .music-card {
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    max-width: 400px;
+    margin: 0 auto 40px auto;
+    padding: 20px;
+  }
+
+  .music-card img {
+    width: 100%;
+    border-radius: 15px;
+    margin-bottom: 15px;
+  }
+
+  .song-name {
+    font-size: 22px;
+    margin-bottom: 10px;
+    color: #333;
+  }
+
+  audio {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .play-count {
+    font-size: 14px;
+    color: #666;
+  }
+</style>
 </head>
 <body>
-<h2>播放歌曲：林俊杰 - 瞬间的瞬间</h2>
-<audio controls autoplay>
-  <source src="https://raw.githubusercontent.com/quowyz/music-repo/main/%E6%9E%97%E4%BF%8A%E6%9D%B0_%E7%9E%AC%E9%97%B4%E7%9A%84%E7%9E%AC%E9%97%B4.mp3" type="audio/mpeg">
-  你的浏览器不支持 audio 标签。
-</audio>
+
+<h1>叶露湘雨的音乐仓库</h1>
+
+<div id="musicContainer"></div>
+
+<script>
+// 音乐列表，每个对象包含名称、音频链接和海报链接
+const musicFiles = [
+  {
+    name: "瞬间的瞬间",
+    audio: "https://raw.githubusercontent.com/quowyz/music-repo/main/%E6%9E%97%E4%BF%8A%E6%9D%B0_%E7%9E%AC%E9%97%B4%E7%9A%84%E7%9E%AC%E9%97%B4.mp3",
+    image: "https://github.com/quowyz/music-repo/blob/main/docs/images/JJ-Lin-MomentaryMoment.jpg",
+    playCount: 0
+  }
+];
+
+const container = document.getElementById('musicContainer');
+
+musicFiles.forEach(song => {
+  // 创建卡片
+  const card = document.createElement('div');
+  card.className = 'music-card';
+
+  // 海报图片
+  const img = document.createElement('img');
+  img.src = song.image;
+  card.appendChild(img);
+
+  // 歌曲名称
+  const name = document.createElement('div');
+  name.className = 'song-name';
+  name.textContent = song.name;
+  card.appendChild(name);
+
+  // audio 播放器
+  const audio = document.createElement('audio');
+  audio.controls = true;
+  audio.src = song.audio;
+  card.appendChild(audio);
+
+  // 播放量显示
+  const playCount = document.createElement('div');
+  playCount.className = 'play-count';
+  playCount.textContent = `播放量: ${song.playCount}`;
+  card.appendChild(playCount);
+
+  // 播放事件增加播放量
+  audio.addEventListener('play', () => {
+    song.playCount++;
+    playCount.textContent = `播放量: ${song.playCount}`;
+  });
+
+  container.appendChild(card);
+});
+</script>
+
 </body>
 </html>
