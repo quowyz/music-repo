@@ -2,22 +2,29 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
-<title>音乐播放页面</title>
+<title>叶露湘雨的音乐仓库</title>
 <style>
   body {
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
     text-align: center;
-    padding: 40px;
+    padding: 40px 20px;
+  }
+
+  h1 {
+    margin-bottom: 40px;
+    color: #333;
   }
 
   .music-card {
     background: #fff;
     border-radius: 15px;
     box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-    max-width: 400px;
+    width: 90%;
+    max-width: 600px;
     margin: 0 auto 40px auto;
-    padding: 20px;
+    padding: 25px;
+    box-sizing: border-box;
   }
 
   .music-card img {
@@ -28,7 +35,7 @@
 
   .song-name {
     font-size: 22px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     color: #333;
   }
 
@@ -55,21 +62,23 @@ const musicFiles = [
   {
     name: "林俊杰_瞬间的瞬间",
     audio: "https://raw.githubusercontent.com/quowyz/music-repo/main/%E6%9E%97%E4%BF%8A%E6%9D%B0_%E7%9E%AC%E9%97%B4%E7%9A%84%E7%9E%AC%E9%97%B4.mp3",
-    image: "https://quowyz.github.io/music-repo/images/JJ-Lin-MomentaryMoment.jpg",
+    // 图片必须是 Raw URL 或 GitHub Pages URL
+    image: "https://raw.githubusercontent.com/quowyz/music-repo/main/docs/images/JJ-Lin-MomentaryMoment.jpg",
     playCount: 0
   }
+  // 可以在这里继续添加更多歌曲
 ];
 
 const container = document.getElementById('musicContainer');
 
 musicFiles.forEach(song => {
-  // 创建卡片
   const card = document.createElement('div');
   card.className = 'music-card';
 
   // 海报图片
   const img = document.createElement('img');
   img.src = song.image;
+  img.alt = song.name + " 海报";
   card.appendChild(img);
 
   // 歌曲名称
