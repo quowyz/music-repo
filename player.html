@@ -101,7 +101,7 @@ musicFiles.forEach(song => {
   // 播放事件增加播放量
   audio.addEventListener('play', () => {
     song.playCount++;
-    playCount.textContent = `播放量: ${song.playCount}`;
+    playCount.textContent = `播放次数: ${song.playCount}`;
   });
 
   container.appendChild(card);
