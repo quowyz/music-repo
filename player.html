@@ -64,7 +64,7 @@ const musicFiles = [
   {
     name: "林俊杰_瞬间的瞬间",
     audio: "https://raw.githubusercontent.com/quowyz/music-repo/main/%E6%9E%97%E4%BF%8A%E6%9D%B0_%E7%9E%AC%E9%97%B4%E7%9A%84%E7%9E%AC%E9%97%B4.mp3",
-    image: "https://raw.githubusercontent.com/quowyz/music-repo/main/images/JJ-Lin-MomentaryMoment.jpg",
+    image: "https://raw.githubusercontent.com/quowyz/music-repo/main/docs/images/JJ-Lin-MomentaryMoment.jpg",
     playCount: 0
   }
 ];
@@ -76,11 +76,10 @@ musicFiles.forEach(song => {
   const card = document.createElement('div');
   card.className = 'music-card';
 
-  // 海报图片 (懒加载)
+  // 海报图片（直接加载，不懒加载）
   const img = document.createElement('img');
   img.src = song.image;
   img.alt = song.name;
-  img.loading = "lazy";  // 懒加载
   card.appendChild(img);
 
   // 歌曲名称
@@ -98,13 +97,13 @@ musicFiles.forEach(song => {
   // 播放量显示
   const playCount = document.createElement('div');
   playCount.className = 'play-count';
-  playCount.textContent = `播放次数: ${song.playCount}`;
+  playCount.textContent = `播放量: ${song.playCount}`;
   card.appendChild(playCount);
 
   // 播放事件增加播放量
   audio.addEventListener('play', () => {
     song.playCount++;
-    playCount.textContent = `播放次数: ${song.playCount}`;
+    playCount.textContent = `播放量: ${song.playCount}`;
   });
 
   container.appendChild(card);
