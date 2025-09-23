@@ -2,40 +2,37 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
-<title>叶露湘雨的音乐仓库</title>
+<title>音乐播放页面</title>
 <style>
   body {
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
     text-align: center;
-    padding: 40px 20px;
-  }
-
-  h1 {
-    margin-bottom: 40px;
-    color: #333;
+    padding: 20px;
+    margin: 0;
   }
 
   .music-card {
     background: #fff;
     border-radius: 15px;
     box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-    width: 90%;
-    max-width: 600px;
-    margin: 0 auto 40px auto;
-    padding: 25px;
-    box-sizing: border-box;
+    max-width: 500px;   /* 桌面端最大宽度 */
+    width: 95%;         /* 手机端宽度自适应 */
+    margin: 20px auto;
+    padding: 20px;
   }
 
   .music-card img {
-    width: 100%;
+    max-width: 100%;
+    height: auto;
     border-radius: 15px;
     margin-bottom: 15px;
+    display: block;
   }
 
   .song-name {
-    font-size: 22px;
-    margin-bottom: 15px;
+    font-size: 20px;
+    margin-bottom: 10px;
     color: #333;
   }
 
@@ -47,6 +44,11 @@
   .play-count {
     font-size: 14px;
     color: #666;
+  }
+
+  h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
   }
 </style>
 </head>
@@ -62,8 +64,7 @@ const musicFiles = [
   {
     name: "林俊杰_瞬间的瞬间",
     audio: "https://raw.githubusercontent.com/quowyz/music-repo/main/%E6%9E%97%E4%BF%8A%E6%9D%B0_%E7%9E%AC%E9%97%B4%E7%9A%84%E7%9E%AC%E9%97%B4.mp3",
-    // 图片使用 Raw URL，不使用 blob
-    image: "https://raw.githubusercontent.com/quowyz/music-repo/main/docs/images/JJ-Lin-MomentaryMoment.jpg",
+    image: "https://raw.githubusercontent.com/quowyz/music-repo/main/images/JJ-Lin-MomentaryMoment.jpg",
     playCount: 0
   }
 ];
@@ -71,13 +72,15 @@ const musicFiles = [
 const container = document.getElementById('musicContainer');
 
 musicFiles.forEach(song => {
+  // 创建卡片
   const card = document.createElement('div');
   card.className = 'music-card';
 
-  // 海报图片
+  // 海报图片 (懒加载)
   const img = document.createElement('img');
   img.src = song.image;
-  img.alt = song.name + " 海报";
+  img.alt = song.name;
+  img.loading = "lazy";  // 懒加载
   card.appendChild(img);
 
   // 歌曲名称
@@ -95,7 +98,7 @@ musicFiles.forEach(song => {
   // 播放量显示
   const playCount = document.createElement('div');
   playCount.className = 'play-count';
-  playCount.textContent = `播放量: ${song.playCount}`;
+  playCount.textContent = `播放次数: ${song.playCount}`;
   card.appendChild(playCount);
 
   // 播放事件增加播放量
