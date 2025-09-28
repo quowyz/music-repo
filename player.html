@@ -8,40 +8,38 @@
 :root{
   --accent1:#ff6a00;
   --accent2:#ee0979;
-  --glass:rgba(255,255,255,0.1);
-  --glass-border:rgba(255,255,255,0.25);
+  --glass: rgba(255,255,255,0.1);
   --text-light:#f3f3f3;
 }
-*{box-sizing:border-box}
+*{box-sizing:border-box;}
 body{
   font-family:"Segoe UI",Arial,sans-serif;
-  background: linear-gradient(135deg,#667eea,#764ba2);
   margin:0;
+  min-height:100vh;
   display:flex;
   justify-content:center;
   align-items:center;
-  height:100vh;
+  padding:12px;
+  background: linear-gradient(135deg,#667eea,#764ba2);
+  color: var(--text-light);
 }
 
-/* 漂浮卡片 */
 .player-container{
   display:flex;
-  flex-direction:row;
-  gap:24px;
+  flex-wrap:wrap;
+  gap:20px;
   backdrop-filter: blur(12px);
   background: var(--glass);
   border-radius:20px;
-  padding:20px;
+  padding:16px;
   box-shadow:0 20px 40px rgba(0,0,0,0.3);
-  transition: transform 0.3s;
+  width:100%;
   max-width:1100px;
 }
-.player-container:hover{transform:translateY(-5px);}
-@media(max-width:900px){.player-container{flex-direction:column;}}
 
-/* 左侧封面与控制 */
 .left{
-  flex:1;
+  flex:1 1 320px;
+  min-width:280px;
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -49,75 +47,74 @@ body{
 }
 .cover{
   width:100%;
-  max-width:450px;
-  height:450px;
+  max-width:400px;
+  aspect-ratio:1/1;
   border-radius:20px;
   object-fit:cover;
+  transition:opacity .6s ease, transform .3s ease;
   box-shadow:0 12px 32px rgba(0,0,0,0.4);
-  transition: transform 0.3s, filter 0.3s, opacity 0.6s;
 }
-.cover:hover{transform: scale(1.05) rotate(1deg);}
+.cover:hover{transform:scale(1.03);}
 .song-title{font-size:1.5rem;font-weight:700;text-align:center;}
 .meta-row{display:flex;justify-content:space-between;width:100%;font-size:0.95rem;}
-.progress-wrap{width:100%;margin-top:12px;}
+.progress-wrap{width:100%; margin-top:12px;}
 .time-row{display:flex;justify-content:space-between;font-size:0.85rem;}
 input[type=range].progress{
-  -webkit-appearance:none;width:100%;height:10px;
+  -webkit-appearance:none;
+  width:100%;
+  height:10px;
+  background: linear-gradient(90deg,var(--accent1),var(--accent2));
   border-radius:6px;
   outline:none;
-  background: linear-gradient(90deg,var(--accent1),var(--accent2));
-  background-size: 200% 100%;
-  background-position: left;
-  animation: gradientShift 3s linear infinite;
-}
-@keyframes gradientShift{
-  0%{background-position:left;}
-  50%{background-position:right;}
-  100%{background-position:left;}
 }
 input[type=range].progress::-webkit-slider-thumb{
-  -webkit-appearance:none;width:18px;height:18px;border-radius:50%;
-  background:#fff;border:3px solid rgba(255,255,255,0.3);cursor:pointer;
+  -webkit-appearance:none;
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  background:#fff;
+  border:3px solid rgba(255,255,255,0.3);
 }
 
-/* 控制按钮 */
-.controls{margin-top:14px;display:flex;gap:30px;justify-content:center;align-items:center;}
-.btn-symbol{
-  font-size:32px;
-  background:transparent;border:none;color:var(--text-light);
-  cursor:pointer;padding:8px;transition: transform 0.2s,color 0.2s;
-}
+.controls{display:flex;gap:20px;justify-content:center;align-items:center;flex-wrap:wrap;}
+.btn-symbol{font-size:28px;background:transparent;border:none;color:var(--text-light);cursor:pointer;padding:6px;transition:transform 0.2s,color 0.2s;}
 .btn-symbol:hover{transform:scale(1.4);color:#ffcc00;}
 .btn-symbol:active{transform:scale(1.2);}
 
-/* 音量条 */
-.volume-wrap{width:100%;display:flex;align-items:center;gap:8px;margin-top:10px;}
-.volume-wrap input[type=range]{flex:1;height:6px;border-radius:4px;background:linear-gradient(90deg,var(--accent1),var(--accent2));}
+.volume-wrap{width:100%;display:flex;align-items:center;gap:8px;}
+.volume-wrap input{flex:1;}
 
-/* 右侧播放列表 */
-.right{width:300px;flex:0 0 300px;}
-.playlist{
-  background: var(--glass);
-  padding:16px;border-radius:20px;backdrop-filter:blur(12px);
-  max-height:500px;overflow:auto;
+.right{
+  flex:0 1 280px;
+  min-width:240px;
 }
-.playlist h3{text-align:center;margin-bottom:12px;font-size:1.2rem;}
-.playlist ul{list-style:none;padding:0;margin:0;display:grid;gap:12px;}
+.playlist{
+  max-height:500px;
+  overflow:auto;
+  padding:16px;
+  border-radius:20px;
+  backdrop-filter:blur(12px);
+  background: var(--glass);
+  box-shadow:0 12px 28px rgba(0,0,0,0.25);
+}
+.playlist h3{text-align:center;margin-bottom:12px;}
+.playlist ul{display:flex;flex-direction:column;gap:10px;list-style:none;padding:0;margin:0;}
 .playlist li{
-  display:flex;align-items:center;gap:12px;padding:10px;border-radius:12px;
-  cursor:pointer;transition: transform 0.2s, background 0.2s;
+  display:flex;align-items:center;gap:8px;
+  padding:8px;border-radius:12px;cursor:pointer;
+  transition:transform 0.2s,background 0.2s;
   background: rgba(255,255,255,0.05);
 }
-.playlist li:hover{transform:scale(1.03);background: rgba(255,255,255,0.12);}
-.playlist li.active{background: linear-gradient(135deg,var(--accent1),var(--accent2));font-weight:700;}
-.thumb{width:50px;height:50px;border-radius:8px;object-fit:cover;}
+.playlist li:hover{transform:scale(1.03);background:rgba(255,255,255,0.12);}
+.playlist li.active{background:linear-gradient(135deg,var(--accent1),var(--accent2));font-weight:700;}
+.thumb{width:40px;height:40px;border-radius:8px;object-fit:cover;}
 </style>
 </head>
 <body>
 
 <div class="player-container">
   <div class="left">
-    <img id="cover" class="cover" src="" alt="封面" />
+    <img id="cover" class="cover" src="" alt="封面"/>
     <div class="song-title" id="title">--</div>
     <div class="meta-row">
       <div id="artist"></div>
@@ -125,16 +122,16 @@ input[type=range].progress::-webkit-slider-thumb{
     </div>
     <div class="progress-wrap">
       <div class="time-row"><span id="currentTime">0:00</span><span id="duration">0:00</span></div>
-      <input id="progress" class="progress" type="range" min="0" max="100" value="0" />
+      <input id="progress" class="progress" type="range" min="0" max="100" value="0"/>
+    </div>
+    <div class="volume-wrap">
+      🔊 <input type="range" id="volume" min="0" max="1" step="0.01" value="1"/>
     </div>
     <div class="controls">
       <button id="prev" class="btn-symbol">⏮</button>
       <button id="playPause" class="btn-symbol">▶️</button>
       <button id="next" class="btn-symbol">⏭</button>
       <button id="mode" class="btn-symbol">🔁</button>
-    </div>
-    <div class="volume-wrap">
-      🔊<input id="volume" type="range" min="0" max="1" step="0.01" value="0.5">
     </div>
     <audio id="audio"></audio>
   </div>
@@ -165,7 +162,7 @@ const songList=document.getElementById('songList');
 const progress=document.getElementById('progress');
 const currentTimeEl=document.getElementById('currentTime');
 const durationEl=document.getElementById('duration');
-const volumeSlider=document.getElementById('volume');
+const volumeEl=document.getElementById('volume');
 
 let currentIndex=0;
 let mode="loop";
@@ -181,7 +178,7 @@ function updatePlaylist(){
   });
 }
 
-function formatTime(sec){if(!sec)return"0:00";const m=Math.floor(sec/60),s=Math.floor(sec%60);return `${m}:${s.toString().padStart(2,'0')}`;}
+function formatTime(sec){if(!sec)return "0:00";const m=Math.floor(sec/60),s=Math.floor(sec%60);return `${m}:${s.toString().padStart(2,'0')}`;}
 
 function loadSong(index,autoplay=false){
   currentIndex=index;
@@ -195,24 +192,24 @@ function loadSong(index,autoplay=false){
   if(autoplay) playSong();
 }
 
-function playSong(){audio.play();playPauseBtn.textContent='⏸';}
-function pauseSong(){audio.pause();playPauseBtn.textContent='▶️';}
+function playSong(){audio.play(); playPauseBtn.textContent='⏸';}
+function pauseSong(){audio.pause(); playPauseBtn.textContent='▶️';}
 function prevSong(){playSongAt(mode==="random"?Math.floor(Math.random()*musicFiles.length):(currentIndex-1+musicFiles.length)%musicFiles.length);}
 function nextSong(){playSongAt(mode==="random"?Math.floor(Math.random()*musicFiles.length):(currentIndex+1)%musicFiles.length);}
 function playSongAt(i){loadSong(i,true);}
 
 playPauseBtn.onclick=()=>audio.paused?playSong():pauseSong();
-prevBtn.onclick=prevSong;
-nextBtn.onclick=nextSong;
+prevBtn.onclick=prevSong; nextBtn.onclick=nextSong;
 modeBtn.onclick=()=>{
   mode=(mode==="loop")?"random":"loop";
   modeBtn.textContent=mode==="loop"?"🔁":"🔀";
 };
-volumeSlider.oninput=()=>audio.volume=volumeSlider.value;
 
 audio.onloadedmetadata=()=>durationEl.textContent=formatTime(audio.duration);
 audio.ontimeupdate=()=>{progress.value=(audio.currentTime/audio.duration)*100;currentTimeEl.textContent=formatTime(audio.currentTime);};
 progress.oninput=()=>audio.currentTime=(progress.value/100)*audio.duration;
+
+volumeEl.oninput=()=>audio.volume=volumeEl.value;
 
 audio.onplay=()=>{
   musicFiles[currentIndex].playCount++;
