@@ -5,154 +5,112 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>叶露湘雨的音乐仓库</title>
 <style>
-  :root{
-    --accent1: #ff6a00;
-    --accent2: #ee0979;
-    --glass: rgba(255,255,255,0.1);
-    --glass-border: rgba(255,255,255,0.25);
-    --text-light: #f3f3f3;
-  }
-  *{box-sizing:border-box}
-  body {
-    font-family: "Segoe UI", Arial, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: var(--text-light);
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    padding: 24px 12px;
-  }
+:root{
+  --accent1:#ff6a00;
+  --accent2:#ee0979;
+  --glass:rgba(255,255,255,0.1);
+  --glass-border:rgba(255,255,255,0.25);
+  --text-light:#f3f3f3;
+}
+*{box-sizing:border-box}
+body{
+  font-family:"Segoe UI",Arial,sans-serif;
+  background: linear-gradient(135deg,#667eea,#764ba2);
+  margin:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
 
-  header{
-    text-align:center;
-    margin-bottom: 12px;
-  }
-  header h1{
-    margin:0;
-    font-size:1.6rem;
-    font-weight:700;
-    text-shadow: 0 2px 6px rgba(0,0,0,0.5);
-  }
+/* 漂浮卡片 */
+.player-container{
+  display:flex;
+  flex-direction:row;
+  gap:24px;
+  backdrop-filter: blur(12px);
+  background: var(--glass);
+  border-radius:20px;
+  padding:20px;
+  box-shadow:0 20px 40px rgba(0,0,0,0.3);
+  transition: transform 0.3s;
+  max-width:1100px;
+}
+.player-container:hover{transform:translateY(-5px);}
+@media(max-width:900px){.player-container{flex-direction:column;}}
 
-  .player-container{
-    max-width:1100px;
-    width: 100%;
-    display:flex;
-    flex-direction:column;
-    gap:24px;
-  }
+/* 左侧封面与控制 */
+.left{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:16px;
+}
+.cover{
+  width:100%;
+  max-width:450px;
+  height:450px;
+  border-radius:20px;
+  object-fit:cover;
+  box-shadow:0 12px 32px rgba(0,0,0,0.4);
+  transition: transform 0.3s, filter 0.3s, opacity 0.6s;
+}
+.cover:hover{transform: scale(1.05) rotate(1deg);}
+.song-title{font-size:1.5rem;font-weight:700;text-align:center;}
+.meta-row{display:flex;justify-content:space-between;width:100%;font-size:0.95rem;}
+.progress-wrap{width:100%;margin-top:12px;}
+.time-row{display:flex;justify-content:space-between;font-size:0.85rem;}
+input[type=range].progress{
+  -webkit-appearance:none;width:100%;height:10px;
+  border-radius:6px;
+  outline:none;
+  background: linear-gradient(90deg,var(--accent1),var(--accent2));
+  background-size: 200% 100%;
+  background-position: left;
+  animation: gradientShift 3s linear infinite;
+}
+@keyframes gradientShift{
+  0%{background-position:left;}
+  50%{background-position:right;}
+  100%{background-position:left;}
+}
+input[type=range].progress::-webkit-slider-thumb{
+  -webkit-appearance:none;width:18px;height:18px;border-radius:50%;
+  background:#fff;border:3px solid rgba(255,255,255,0.3);cursor:pointer;
+}
 
-  @media(min-width:900px){
-    .player-container{
-      flex-direction:row;
-      align-items:flex-start;
-    }
-  }
+/* 控制按钮 */
+.controls{margin-top:14px;display:flex;gap:30px;justify-content:center;align-items:center;}
+.btn-symbol{
+  font-size:32px;
+  background:transparent;border:none;color:var(--text-light);
+  cursor:pointer;padding:8px;transition: transform 0.2s,color 0.2s;
+}
+.btn-symbol:hover{transform:scale(1.4);color:#ffcc00;}
+.btn-symbol:active{transform:scale(1.2);}
 
-  /* 左侧封面和控制 */
-  .left {
-    flex: 1 1 600px;
-    min-width: 300px;
-    background: var(--glass);
-    border-radius: 20px;
-    padding: 20px;
-    backdrop-filter: blur(12px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    transition: transform 0.3s;
-  }
-  .left:hover { transform: translateY(-2px); }
+/* 音量条 */
+.volume-wrap{width:100%;display:flex;align-items:center;gap:8px;margin-top:10px;}
+.volume-wrap input[type=range]{flex:1;height:6px;border-radius:4px;background:linear-gradient(90deg,var(--accent1),var(--accent2));}
 
-  .cover {
-    width: 100%;
-    max-width: 500px;
-    height: 500px;
-    border-radius: 20px;
-    object-fit: cover;
-    transition: opacity .6s ease, transform .3s ease;
-    box-shadow: 0 12px 32px rgba(0,0,0,0.4);
-  }
-  .cover:hover { transform: scale(1.03); }
-
-  .song-title { font-size:1.5rem; font-weight:700; text-align:center; }
-  .meta-row{ display:flex; justify-content:space-between; align-items:center; width:100%; }
-  .play-count{ font-size:0.95rem; opacity:0.9; }
-
-  .progress-wrap{ width:100%; margin-top:12px; }
-  .time-row{ display:flex; justify-content:space-between; font-size:0.85rem; }
-
-  input[type=range].progress{
-    -webkit-appearance:none; width:100%; height:10px;
-    background: linear-gradient(90deg,var(--accent1),var(--accent2));
-    border-radius:6px; outline:none; margin:6px 0 0;
-  }
-  input[type=range].progress::-webkit-slider-thumb{
-    -webkit-appearance:none; width:18px; height:18px;
-    border-radius:50%; background:#fff;
-    border:3px solid rgba(255,255,255,0.3);
-  }
-
-  /* 控制按钮风格 */
-  .controls{
-    margin-top:14px;
-    display:flex; gap:30px; justify-content:center; align-items:center;
-  }
-  .btn-symbol {
-    font-size: 32px;        
-    background: transparent; 
-    border: none; 
-    color: var(--text-light); 
-    cursor: pointer;
-    padding: 8px;
-    transition: transform 0.2s, color 0.2s;
-  }
-  .btn-symbol:hover {
-    transform: scale(1.4);   
-    color: #ffcc00;          
-  }
-  .btn-symbol:active {
-    transform: scale(1.2);  
-  }
-
-  /* 右侧播放列表 */
-  .right{
-    width:360px; 
-    flex:0 0 360px; 
-    display:flex; flex-direction:column; gap:12px;
-  }
-  @media(max-width:899px){ 
-    .right{ width:100%; order:2; } 
-    .left{ order:1; } 
-  }
-
-  .playlist{
-    background: var(--glass); 
-    padding:16px; 
-    border-radius:20px;
-    backdrop-filter: blur(12px);
-    box-shadow: 0 12px 28px rgba(0,0,0,0.25);
-    max-height:600px; 
-    overflow:auto;
-  }
-  .playlist h3{ margin:6px 8px; font-size:1.2rem; text-align:center; }
-  .playlist ul{
-    display:grid; grid-template-columns:1fr; gap:12px;
-    list-style:none; padding:0; margin:0;
-  }
-  .playlist li{
-    padding:10px; border-radius:12px; cursor:pointer;
-    display:flex; align-items:center; gap:12px;
-    font-size:1rem;
-    transition: transform 0.2s, background 0.2s;
-    background: rgba(255,255,255,0.05);
-  }
-  .playlist li:hover { transform: scale(1.03); background: rgba(255,255,255,0.12); }
-  .playlist li.active{ background: linear-gradient(135deg,var(--accent1),var(--accent2)); font-weight:700; }
-  .playlist .thumb{ width:50px;height:50px;border-radius:8px;object-fit:cover; }
-
+/* 右侧播放列表 */
+.right{width:300px;flex:0 0 300px;}
+.playlist{
+  background: var(--glass);
+  padding:16px;border-radius:20px;backdrop-filter:blur(12px);
+  max-height:500px;overflow:auto;
+}
+.playlist h3{text-align:center;margin-bottom:12px;font-size:1.2rem;}
+.playlist ul{list-style:none;padding:0;margin:0;display:grid;gap:12px;}
+.playlist li{
+  display:flex;align-items:center;gap:12px;padding:10px;border-radius:12px;
+  cursor:pointer;transition: transform 0.2s, background 0.2s;
+  background: rgba(255,255,255,0.05);
+}
+.playlist li:hover{transform:scale(1.03);background: rgba(255,255,255,0.12);}
+.playlist li.active{background: linear-gradient(135deg,var(--accent1),var(--accent2));font-weight:700;}
+.thumb{width:50px;height:50px;border-radius:8px;object-fit:cover;}
 </style>
 </head>
 <body>
@@ -175,6 +133,9 @@
       <button id="next" class="btn-symbol">⏭</button>
       <button id="mode" class="btn-symbol">🔁</button>
     </div>
+    <div class="volume-wrap">
+      🔊<input id="volume" type="range" min="0" max="1" step="0.01" value="0.5">
+    </div>
     <audio id="audio"></audio>
   </div>
 
@@ -187,91 +148,79 @@
 </div>
 
 <script>
-const musicFiles = [
-  {
-    name: "林俊杰_瞬间的瞬间",
-    audio: "https://raw.githubusercontent.com/quowyz/music-repo/main/%E6%9E%97%E4%BF%8A%E6%9D%B0_%E7%9E%AC%E9%97%B4%E7%9A%84%E7%9E%AC%E9%97%B4.mp3",
-    image: "https://raw.githubusercontent.com/quowyz/music-repo/main/docs/images/JJ-Lin-MomentaryMoment.jpg",
-    playCount: 0
-  },
-  {
-    name: "李荣浩_恋人",
-    audio: "https://raw.githubusercontent.com/quowyz/music-repo/main/李荣浩_恋人.mp3",
-    image: "https://raw.githubusercontent.com/quowyz/music-repo/main/docs/images/Lover.jpeg",
-    playCount: 0
-  }
+const musicFiles=[
+  {name:"林俊杰_瞬间的瞬间",audio:"https://raw.githubusercontent.com/quowyz/music-repo/main/%E6%9E%97%E4%BF%8A%E6%9D%B0_%E7%9E%AC%E9%97%B4%E7%9A%84%E7%9E%AC%E9%97%B4.mp3",image:"https://raw.githubusercontent.com/quowyz/music-repo/main/docs/images/JJ-Lin-MomentaryMoment.jpg",playCount:0},
+  {name:"李荣浩_恋人",audio:"https://raw.githubusercontent.com/quowyz/music-repo/main/李荣浩_恋人.mp3",image:"https://raw.githubusercontent.com/quowyz/music-repo/main/docs/images/Lover.jpeg",playCount:0}
 ];
 
-const audio = document.getElementById('audio');
-const cover = document.getElementById('cover');
-const title = document.getElementById('title');
-const playCountDiv = document.getElementById('playCount');
-const playPauseBtn = document.getElementById('playPause');
-const prevBtn = document.getElementById('prev');
-const nextBtn = document.getElementById('next');
-const modeBtn = document.getElementById('mode');
-const songList = document.getElementById('songList');
-const progress = document.getElementById('progress');
-const currentTimeEl = document.getElementById('currentTime');
-const durationEl = document.getElementById('duration');
+const audio=document.getElementById('audio');
+const cover=document.getElementById('cover');
+const title=document.getElementById('title');
+const playCountDiv=document.getElementById('playCount');
+const playPauseBtn=document.getElementById('playPause');
+const prevBtn=document.getElementById('prev');
+const nextBtn=document.getElementById('next');
+const modeBtn=document.getElementById('mode');
+const songList=document.getElementById('songList');
+const progress=document.getElementById('progress');
+const currentTimeEl=document.getElementById('currentTime');
+const durationEl=document.getElementById('duration');
+const volumeSlider=document.getElementById('volume');
 
-let currentIndex = 0;
-let mode = "loop";
+let currentIndex=0;
+let mode="loop";
 
 function updatePlaylist(){
-  songList.innerHTML = '';
+  songList.innerHTML='';
   musicFiles.forEach((s,i)=>{
     const li=document.createElement('li');
-    li.className = (i===currentIndex)?'active':'';
-    li.innerHTML=`<img class="thumb" src="${s.image}"> <span>${s.name}</span>`;
+    li.className=(i===currentIndex)?'active':'';
+    li.innerHTML=`<img class="thumb" src="${s.image}"><span>${s.name}</span>`;
     li.onclick=()=>loadSong(i,true);
     songList.appendChild(li);
   });
 }
 
-function formatTime(sec){
-  if(!sec) return "0:00";
-  const m=Math.floor(sec/60),s=Math.floor(sec%60);
-  return `${m}:${s.toString().padStart(2,'0')}`;
-}
+function formatTime(sec){if(!sec)return"0:00";const m=Math.floor(sec/60),s=Math.floor(sec%60);return `${m}:${s.toString().padStart(2,'0')}`;}
 
-function loadSong(index, autoplay=false){
+function loadSong(index,autoplay=false){
   currentIndex=index;
   const s=musicFiles[index];
   audio.src=s.audio;
   cover.style.opacity=0;
-  setTimeout(()=>{ cover.src=s.image; cover.style.opacity=1; },200);
+  setTimeout(()=>{cover.src=s.image;cover.style.opacity=1;},200);
   title.textContent=s.name;
   playCountDiv.textContent=`播放量: ${s.playCount}`;
   updatePlaylist();
   if(autoplay) playSong();
 }
 
-function playSong(){ audio.play(); playPauseBtn.textContent='⏸'; }
-function pauseSong(){ audio.pause(); playPauseBtn.textContent='▶️'; }
-function prevSong(){ playSongAt(mode==="random"?Math.floor(Math.random()*musicFiles.length):(currentIndex-1+musicFiles.length)%musicFiles.length); }
-function nextSong(){ playSongAt(mode==="random"?Math.floor(Math.random()*musicFiles.length):(currentIndex+1)%musicFiles.length); }
-function playSongAt(i){ loadSong(i,true); }
+function playSong(){audio.play();playPauseBtn.textContent='⏸';}
+function pauseSong(){audio.pause();playPauseBtn.textContent='▶️';}
+function prevSong(){playSongAt(mode==="random"?Math.floor(Math.random()*musicFiles.length):(currentIndex-1+musicFiles.length)%musicFiles.length);}
+function nextSong(){playSongAt(mode==="random"?Math.floor(Math.random()*musicFiles.length):(currentIndex+1)%musicFiles.length);}
+function playSongAt(i){loadSong(i,true);}
 
-playPauseBtn.onclick=()=> audio.paused?playSong():pauseSong();
-prevBtn.onclick=prevSong; nextBtn.onclick=nextSong;
+playPauseBtn.onclick=()=>audio.paused?playSong():pauseSong();
+prevBtn.onclick=prevSong;
+nextBtn.onclick=nextSong;
 modeBtn.onclick=()=>{
-  mode = (mode==="loop")?"random":"loop";
-  modeBtn.textContent = mode==="loop"?"🔁":"🔀";
+  mode=(mode==="loop")?"random":"loop";
+  modeBtn.textContent=mode==="loop"?"🔁":"🔀";
 };
+volumeSlider.oninput=()=>audio.volume=volumeSlider.value;
 
-audio.onloadedmetadata=()=> durationEl.textContent=formatTime(audio.duration);
-audio.ontimeupdate=()=>{ progress.value=(audio.currentTime/audio.duration)*100; currentTimeEl.textContent=formatTime(audio.currentTime); };
-progress.oninput=()=> audio.currentTime=(progress.value/100)*audio.duration;
+audio.onloadedmetadata=()=>durationEl.textContent=formatTime(audio.duration);
+audio.ontimeupdate=()=>{progress.value=(audio.currentTime/audio.duration)*100;currentTimeEl.textContent=formatTime(audio.currentTime);};
+progress.oninput=()=>audio.currentTime=(progress.value/100)*audio.duration;
 
 audio.onplay=()=>{
   musicFiles[currentIndex].playCount++;
   playCountDiv.textContent=`播放量: ${musicFiles[currentIndex].playCount}`;
-  fetch(`https://api.countapi.xyz/hit/music-player/${encodeURIComponent(musicFiles[currentIndex].name)}`);
 };
 audio.onended=nextSong;
 
-updatePlaylist(); 
+updatePlaylist();
 loadSong(0,false);
 </script>
 </body>
