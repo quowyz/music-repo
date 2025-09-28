@@ -187,20 +187,32 @@
 </div>
 
 <script>
-const musicFiles = [
-  {
-    name: "林俊杰_瞬间的瞬间",
-    audio: "https://raw.githubusercontent.com/quowyz/music-repo/main/%E6%9E%97%E4%BF%8A%E6%9D%B0_%E7%9E%AC%E9%97%B4%E7%9A%84%E7%9E%AC%E9%97%B4.mp3",
-    image: "https://raw.githubusercontent.com/quowyz/music-repo/main/docs/images/JJ-Lin-MomentaryMoment.jpg",
-    playCount: 0
-  },
-  {
-    name: "李荣浩_恋人",
-    audio: "https://raw.githubusercontent.com/quowyz/music-repo/main/李荣浩_恋人.mp3",
-    image: "https://raw.githubusercontent.com/quowyz/music-repo/main/docs/images/Lover.jpeg",
-    playCount: 0
-  }
-];
+// const musicFiles = [
+//   {
+//     name: "林俊杰_瞬间的瞬间",
+//     audio: "https://raw.githubusercontent.com/quowyz/music-repo/main/%E6%9E%97%E4%BF%8A%E6%9D%B0_%E7%9E%AC%E9%97%B4%E7%9A%84%E7%9E%AC%E9%97%B4.mp3",
+//     image: "https://raw.githubusercontent.com/quowyz/music-repo/main/docs/images/JJ-Lin-MomentaryMoment.jpg",
+//     playCount: 0
+//   },
+//   {
+//     name: "李荣浩_恋人",
+//     audio: "https://raw.githubusercontent.com/quowyz/music-repo/main/李荣浩_恋人.mp3",
+//     image: "https://raw.githubusercontent.com/quowyz/music-repo/main/docs/images/Lover.jpeg",
+//     playCount: 0
+//   }
+// ];
+  let musicFiles = [];
+
+fetch('music-list.json')
+  .then(res => res.json())
+  .then(data => {
+    // 给每首歌添加播放计数
+    musicFiles = data.map(s => ({ ...s, playCount: 0 }));
+    updatePlaylist();       // 更新播放列表显示
+    loadSong(0, false);     // 加载第一首歌
+  })
+  .catch(err => console.error("加载歌曲列表失败", err));
+
 
 const audio = document.getElementById('audio');
 const cover = document.getElementById('cover');
