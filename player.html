@@ -2,112 +2,224 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
-<title>音乐播放页面</title>
+<title>叶露湘雨的音乐仓库</title>
 <style>
   body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(135deg, #c9d6ff, #e2e2e2);
     text-align: center;
+    margin: 0;
+    padding: 0;
+  }
+
+  h1 {
+    font-size: 26px;
     padding: 20px;
     margin: 0;
+    color: #333;
   }
 
-  .music-card {
+  .player-container {
     background: #fff;
-    border-radius: 15px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-    max-width: 500px;   /* 桌面端最大宽度 */
-    width: 95%;         /* 手机端宽度自适应 */
+    border-radius: 20px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+    max-width: 450px;
+    width: 90%;
     margin: 20px auto;
     padding: 20px;
+    transition: all 0.4s ease;
   }
 
-  .music-card img {
-    max-width: 100%;
-    height: auto;
+  .cover {
+    width: 100%;
     border-radius: 15px;
-    margin-bottom: 15px;
-    display: block;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    margin-bottom: 20px;
+    transition: transform 0.5s ease;
   }
 
-  .song-name {
-    font-size: 20px;
-    margin-bottom: 10px;
-    color: #333;
+  .cover:hover {
+    transform: scale(1.05);
+  }
+
+  .song-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #444;
+  }
+
+  .controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin: 15px 0;
+  }
+
+  .controls button {
+    background: #4a90e2;
+    border: none;
+    color: white;
+    padding: 12px 18px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s;
+    font-size: 16px;
+  }
+
+  .controls button:hover {
+    background: #357abd;
+    transform: scale(1.1);
   }
 
   audio {
     width: 100%;
-    margin-bottom: 10px;
+    margin: 10px 0;
   }
 
   .play-count {
     font-size: 14px;
-    color: #666;
+    color: #777;
+    margin-top: 8px;
   }
 
-  h1 {
-    font-size: 24px;
-    margin-bottom: 20px;
+  /* 底部播放列表 */
+  .playlist {
+    margin-top: 20px;
+    text-align: left;
+  }
+
+  .playlist h3 {
+    margin: 10px 0;
+    font-size: 18px;
+    color: #444;
+  }
+
+  .playlist ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .playlist li {
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .playlist li:hover {
+    background: #f0f0f0;
+  }
+
+  .playlist li.active {
+    background: #4a90e2;
+    color: white;
+    font-weight: bold;
   }
 </style>
 </head>
 <body>
 
-<h1>叶露湘雨的音乐仓库</h1>
+<h1>🎵 叶露湘雨的音乐仓库 🎵</h1>
 
-<div id="musicContainer"></div>
+<div class="player-container">
+  <img id="cover" class="cover" src="" alt="封面">
+  <div id="title" class="song-title"></div>
+
+  <audio id="audio" controls></audio>
+
+  <div class="controls">
+    <button id="prev">⏮</button>
+    <button id="playPause">▶️</button>
+    <button id="next">⏭</button>
+  </div>
+
+  <div id="playCount" class="play-count">播放量: 0</div>
+
+  <div class="playlist">
+    <h3>播放列表</h3>
+    <ul id="songList"></ul>
+  </div>
+</div>
 
 <script>
-// 音乐列表，每个对象包含名称、音频链接和海报链接
+// 假设资源分开存放在 /music 和 /images 文件夹
 const musicFiles = [
-  {
-    name: "林俊杰_瞬间的瞬间",
+  { name: "林俊杰_瞬间的瞬间",
     audio: "https://raw.githubusercontent.com/quowyz/music-repo/main/%E6%9E%97%E4%BF%8A%E6%9D%B0_%E7%9E%AC%E9%97%B4%E7%9A%84%E7%9E%AC%E9%97%B4.mp3",
     image: "https://raw.githubusercontent.com/quowyz/music-repo/main/docs/images/JJ-Lin-MomentaryMoment.jpg",
-    playCount: 0
-  }
+    playCount: 0},
 ];
 
-const container = document.getElementById('musicContainer');
+let currentIndex = 0;
+const audio = document.getElementById('audio');
+const cover = document.getElementById('cover');
+const title = document.getElementById('title');
+const playCountDiv = document.getElementById('playCount');
+const playPauseBtn = document.getElementById('playPause');
+const songList = document.getElementById('songList');
 
-musicFiles.forEach(song => {
-  // 创建卡片
-  const card = document.createElement('div');
-  card.className = 'music-card';
-
-  // 海报图片（直接加载，不懒加载）
-  const img = document.createElement('img');
-  img.src = song.image;
-  img.alt = song.name;
-  card.appendChild(img);
-
-  // 歌曲名称
-  const name = document.createElement('div');
-  name.className = 'song-name';
-  name.textContent = song.name;
-  card.appendChild(name);
-
-  // audio 播放器
-  const audio = document.createElement('audio');
-  audio.controls = true;
+function loadSong(index) {
+  const song = musicFiles[index];
   audio.src = song.audio;
-  card.appendChild(audio);
+  cover.src = song.image;
+  title.textContent = song.name;
+  playCountDiv.textContent = `播放量: ${song.playCount}`;
+  updatePlaylist();
+}
 
-  // 播放量显示
-  const playCount = document.createElement('div');
-  playCount.className = 'play-count';
-  playCount.textContent = `播放量: ${song.playCount}`;
-  card.appendChild(playCount);
+function playSong() {
+  audio.play();
+  playPauseBtn.textContent = "⏸";
+}
 
-  // 播放事件增加播放量
-  audio.addEventListener('play', () => {
-    song.playCount++;
-    playCount.textContent = `播放量: ${song.playCount}`;
+function pauseSong() {
+  audio.pause();
+  playPauseBtn.textContent = "▶️";
+}
+
+function updatePlaylist() {
+  songList.innerHTML = "";
+  musicFiles.forEach((song, i) => {
+    const li = document.createElement('li');
+    li.textContent = song.name;
+    if (i === currentIndex) li.classList.add('active');
+    li.addEventListener('click', () => {
+      currentIndex = i;
+      loadSong(currentIndex);
+      playSong();
+    });
+    songList.appendChild(li);
   });
+}
 
-  container.appendChild(card);
+document.getElementById('prev').addEventListener('click', () => {
+  currentIndex = (currentIndex - 1 + musicFiles.length) % musicFiles.length;
+  loadSong(currentIndex);
+  playSong();
 });
+
+document.getElementById('next').addEventListener('click', () => {
+  currentIndex = (currentIndex + 1) % musicFiles.length;
+  loadSong(currentIndex);
+  playSong();
+});
+
+playPauseBtn.addEventListener('click', () => {
+  if (audio.paused) playSong();
+  else pauseSong();
+});
+
+// 每次播放时增加播放量
+audio.addEventListener('play', () => {
+  musicFiles[currentIndex].playCount++;
+  playCountDiv.textContent = `播放量: ${musicFiles[currentIndex].playCount}`;
+});
+
+// 初始化
+loadSong(currentIndex);
 </script>
 
 </body>
