@@ -1,173 +1,235 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-  <meta charset="UTF-8">
-  <title>我的音乐播放器</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin: 20px;
-      background: #f4f4f9;
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>叶露湘雨的音乐仓库</title>
+<style>
+  :root{
+    --accent1: #ff6a00;
+    --accent2: #ee0979;
+    --glass: rgba(255,255,255,0.08);
+    --text-light: #f3f3f3;
+  }
+  *{box-sizing:border-box}
+  body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: var(--text-light);
+    margin: 0;
+  }
+
+  header{
+    text-align:center;
+    padding:18px 12px;
+  }
+  header h1{
+    margin:0;
+    font-size:1.5rem;
+    font-weight:700;
+  }
+
+  .player-container{
+    max-width:1100px;
+    margin:24px auto;
+    padding:20px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+    border-radius:18px;
+    box-shadow: 0 14px 40px rgba(0,0,0,0.35);
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+  }
+  @media(min-width:900px){
+    .player-container{
+      flex-direction:row;
+      align-items:flex-start;
+      gap:28px;
     }
-    .player {
-      max-width: 400px;
-      margin: auto;
-      background: white;
-      padding: 15px;
-      border-radius: 15px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    img {
-      width: 200px;
-      height: 200px;
-      border-radius: 12px;
-      object-fit: cover;
-      transition: opacity 0.6s ease-in-out; /* 淡入淡出 */
-    }
-    .controls {
-      margin: 15px 0;
-    }
-    .controls button {
-      background: linear-gradient(135deg, #6a11cb, #2575fc);
-      border: none;
-      color: white;
-      padding: 10px 18px;
-      margin: 5px;
-      border-radius: 25px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .controls button:hover {
-      transform: scale(1.1);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    }
-    .playlist {
-      display: grid;
-      grid-template-columns: 1fr 1fr; /* 两栏布局 */
-      gap: 8px;
-      margin-top: 10px;
-    }
-    .playlist div {
-      background: #f9f9f9;
-      padding: 6px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .playlist div:hover {
-      background: #e6f0ff;
-    }
-    .active {
-      background: #cce0ff !important;
-      font-weight: bold;
-    }
-    .mode {
-      margin-top: 10px;
-      font-size: 14px;
-      color: #444;
-      cursor: pointer;
-    }
-  </style>
+  }
+
+  .left { flex: 1 1 540px; min-width: 260px; }
+  .cover {
+    width: 100%; max-height: 280px;
+    border-radius:14px;
+    object-fit:cover;
+    transition: opacity .6s ease;
+  }
+
+  .song-title { margin:12px 0 6px; font-size:1.25rem; font-weight:700; }
+  .meta-row{ display:flex; justify-content:space-between; align-items:center; }
+  .play-count{ font-size:0.9rem; opacity:0.9; }
+
+  .progress-wrap{ margin-top:12px; }
+  .time-row{ display:flex; justify-content:space-between; font-size:0.85rem; }
+
+  input[type=range].progress{
+    -webkit-appearance:none; width:100%; height:8px;
+    background: linear-gradient(90deg,var(--accent1),var(--accent2));
+    border-radius:6px; outline:none; margin:6px 0 0;
+  }
+  input[type=range].progress::-webkit-slider-thumb{
+    -webkit-appearance:none; width:16px; height:16px;
+    border-radius:50%; background:#fff;
+    border:3px solid rgba(255,255,255,0.25);
+  }
+
+  .controls{
+    margin-top:14px;
+    display:flex; gap:18px; justify-content:center; align-items:center;
+  }
+  .btn {
+    width:60px; height:60px; border-radius:50%;
+    border:none; cursor:pointer;
+    font-size:22px; color:white;
+    background: linear-gradient(135deg,var(--accent1),var(--accent2));
+    box-shadow: 0 6px 16px rgba(0,0,0,0.35);
+  }
+  .btn.small{ width:46px;height:46px;font-size:18px; }
+
+  .right{ width:360px; flex:0 0 360px; display:flex; flex-direction:column; gap:12px; }
+  @media(max-width:899px){ .right{ width:100%; order:2; } .left{ order:1; } }
+
+  .playlist{
+    background: var(--glass); padding:12px; border-radius:12px;
+    max-height:420px; overflow:auto;
+  }
+  .playlist h3{ margin:6px 8px; font-size:1rem; }
+  .playlist ul{
+    display:grid; grid-template-columns:repeat(2,1fr); gap:10px;
+    list-style:none; padding:0; margin:0;
+  }
+  .playlist li{
+    padding:8px; border-radius:10px; cursor:pointer;
+    display:flex; align-items:center; gap:8px;
+    font-size:0.9rem;
+  }
+  .playlist li.active{ background: linear-gradient(135deg,var(--accent1),var(--accent2)); font-weight:700; }
+  .playlist .thumb{ width:40px;height:40px;border-radius:6px;object-fit:cover; }
+</style>
 </head>
 <body>
-  <h2>🎶 我的音乐播放器 🎶</h2>
-  <div class="player">
-    <img id="cover" src="images/1.jpg" alt="封面">
-    <div class="controls">
-      <button onclick="prevSong()">⏮ 上一首</button>
-      <button onclick="togglePlay()">▶️/⏸ 播放</button>
-      <button onclick="nextSong()">⏭ 下一首</button>
+
+<header><h1>🎵 叶露湘雨的音乐仓库</h1></header>
+
+<div class="player-container">
+  <div class="left">
+    <img id="cover" class="cover" src="" alt="封面" />
+    <div class="song-title" id="title">--</div>
+    <div class="meta-row">
+      <div id="artist"></div>
+      <div id="playCount" class="play-count">播放量: 0</div>
     </div>
-    <div id="mode" class="mode" onclick="switchMode()">🔁 循环播放</div>
-    <div class="playlist" id="playlist"></div>
+    <div class="progress-wrap">
+      <div class="time-row"><span id="currentTime">0:00</span><span id="duration">0:00</span></div>
+      <input id="progress" class="progress" type="range" min="0" max="100" value="0" />
+    </div>
+    <div class="controls">
+      <button id="prev" class="btn small">⏮</button>
+      <button id="playPause" class="btn">▶️</button>
+      <button id="next" class="btn small">⏭</button>
+      <button id="mode" class="btn small">🔁</button>
+    </div>
+    <audio id="audio"></audio>
   </div>
 
-  <audio id="audio" preload="auto"></audio>
+  <div class="right">
+    <div class="playlist">
+      <h3>播放列表</h3>
+      <ul id="songList"></ul>
+    </div>
+  </div>
+</div>
 
-  <script>
-    const songs = [
-      { title: "歌曲 1", src: "music/1.mp3", cover: "images/1.jpg" },
-      { title: "歌曲 2", src: "music/2.mp3", cover: "images/2.jpg" },
-      { title: "歌曲 3", src: "music/3.mp3", cover: "images/3.jpg" },
-      { title: "歌曲 4", src: "music/4.mp3", cover: "images/4.jpg" },
-    ];
+<script>
+const musicFiles = [
+  {
+    name: "林俊杰 - 瞬间的瞬间",
+    audio: "music/叶露湘雨1.mp3",
+    image: "images/叶露湘雨1.jpg",
+    playCount: 0
+  },
+  {
+    name: "叶露湘雨 - Demo",
+    audio: "music/叶露湘雨2.mp3",
+    image: "images/叶露湘雨2.jpg",
+    playCount: 0
+  }
+];
 
-    let currentIndex = 0;
-    let mode = "loop"; // loop / random
-    const audio = document.getElementById("audio");
-    const cover = document.getElementById("cover");
-    const playlistEl = document.getElementById("playlist");
+const audio = document.getElementById('audio');
+const cover = document.getElementById('cover');
+const title = document.getElementById('title');
+const playCountDiv = document.getElementById('playCount');
+const playPauseBtn = document.getElementById('playPause');
+const prevBtn = document.getElementById('prev');
+const nextBtn = document.getElementById('next');
+const modeBtn = document.getElementById('mode');
+const songList = document.getElementById('songList');
+const progress = document.getElementById('progress');
+const currentTimeEl = document.getElementById('currentTime');
+const durationEl = document.getElementById('duration');
 
-    // 渲染播放列表
-    function renderPlaylist() {
-      playlistEl.innerHTML = "";
-      songs.forEach((song, i) => {
-        const div = document.createElement("div");
-        div.textContent = song.title;
-        div.className = (i === currentIndex) ? "active" : "";
-        div.onclick = () => playSong(i);
-        playlistEl.appendChild(div);
-      });
-    }
+let currentIndex = 0;
+let mode = "loop"; // loop | random
 
-    // 切换歌曲并淡入淡出
-    function playSong(index) {
-      currentIndex = index;
-      const song = songs[currentIndex];
-      audio.src = song.src;
+function updatePlaylist(){
+  songList.innerHTML = '';
+  musicFiles.forEach((s,i)=>{
+    const li=document.createElement('li');
+    li.className = (i===currentIndex)?'active':'';
+    li.innerHTML=`<img class="thumb" src="${s.image}"> <span>${s.name}</span>`;
+    li.onclick=()=>loadSong(i,true);
+    songList.appendChild(li);
+  });
+}
 
-      // 封面淡出再换图
-      cover.style.opacity = 0;
-      setTimeout(() => {
-        cover.src = song.cover;
-        cover.style.opacity = 1;
-      }, 300);
+function formatTime(sec){
+  if(!sec) return "0:00";
+  const m=Math.floor(sec/60),s=Math.floor(sec%60);
+  return `${m}:${s.toString().padStart(2,'0')}`;
+}
 
-      audio.play();
-      renderPlaylist();
+function loadSong(index, autoplay=false){
+  currentIndex=index;
+  const s=musicFiles[index];
+  audio.src=s.audio;
+  cover.style.opacity=0;
+  setTimeout(()=>{ cover.src=s.image; cover.style.opacity=1; },200);
+  title.textContent=s.name;
+  playCountDiv.textContent=`播放量: ${s.playCount}`;
+  updatePlaylist();
+  if(autoplay) playSong();
+}
 
-      // 上传播放量
-      fetch(`https://api.countapi.xyz/hit/my-music-player/${encodeURIComponent(song.title)}`);
-    }
+function playSong(){
+  audio.play(); playPauseBtn.textContent='⏸';
+}
+function pauseSong(){ audio.pause(); playPauseBtn.textContent='▶️'; }
+function prevSong(){ playSongAt(mode==="random"?Math.floor(Math.random()*musicFiles.length):(currentIndex-1+musicFiles.length)%musicFiles.length); }
+function nextSong(){ playSongAt(mode==="random"?Math.floor(Math.random()*musicFiles.length):(currentIndex+1)%musicFiles.length); }
+function playSongAt(i){ loadSong(i,true); }
 
-    function togglePlay() {
-      if (audio.paused) {
-        audio.play();
-      } else {
-        audio.pause();
-      }
-    }
+playPauseBtn.onclick=()=> audio.paused?playSong():pauseSong();
+prevBtn.onclick=prevSong; nextBtn.onclick=nextSong;
+modeBtn.onclick=()=>{
+  mode = (mode==="loop")?"random":"loop";
+  modeBtn.textContent = mode==="loop"?"🔁":"🔀";
+};
 
-    function prevSong() {
-      if (mode === "random") {
-        playSong(Math.floor(Math.random() * songs.length));
-      } else {
-        playSong((currentIndex - 1 + songs.length) % songs.length);
-      }
-    }
+audio.onloadedmetadata=()=> durationEl.textContent=formatTime(audio.duration);
+audio.ontimeupdate=()=>{ progress.value=(audio.currentTime/audio.duration)*100; currentTimeEl.textContent=formatTime(audio.currentTime); };
+progress.oninput=()=> audio.currentTime=(progress.value/100)*audio.duration;
 
-    function nextSong() {
-      if (mode === "random") {
-        playSong(Math.floor(Math.random() * songs.length));
-      } else {
-        playSong((currentIndex + 1) % songs.length);
-      }
-    }
+audio.onplay=()=>{
+  musicFiles[currentIndex].playCount++;
+  playCountDiv.textContent=`播放量: ${musicFiles[currentIndex].playCount}`;
+  fetch(`https://api.countapi.xyz/hit/music-player/${encodeURIComponent(musicFiles[currentIndex].name)}`);
+};
+audio.onended=nextSong;
 
-    function switchMode() {
-      mode = (mode === "loop") ? "random" : "loop";
-      document.getElementById("mode").textContent =
-        mode === "loop" ? "🔁 循环播放" : "🔀 随机播放";
-    }
-
-    // 自动播放下一首
-    audio.onended = nextSong;
-
-    // 初始化
-    renderPlaylist();
-    playSong(0);
-  </script>
+// 初始化
+updatePlaylist(); loadSong(0,false);
+</script>
 </body>
 </html>
